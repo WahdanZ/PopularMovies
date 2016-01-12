@@ -113,13 +113,14 @@ public class DetailsFragment extends Fragment {
     }
 
     public void initView(MovieModel movieModel) {
-        new FetchMovieTask().execute("videos");
-        new FetchMovieTask().execute("reviews");
+        this.mMovieModel = movieModel;
         textView.setText(movieModel.getTitle());
         Picasso.with(getActivity()).load(movieurl + movieModel.getPosterPath()).into(movieImage);
         tvRate.setText(movieModel.getVoteCount() + "/" + "10");
         tvDescription.setText(movieModel.getOverview());
         tvYear.setText(movieModel.getReleaseDate());
+        new FetchMovieTask().execute("videos");
+        new FetchMovieTask().execute("reviews");
     }
 
     public class FetchMovieTask extends AsyncTask<String, Integer, JSONArray> {

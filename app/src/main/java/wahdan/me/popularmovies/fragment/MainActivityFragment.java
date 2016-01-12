@@ -1,5 +1,8 @@
 package wahdan.me.popularmovies.fragment;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -63,17 +66,6 @@ public class MainActivityFragment extends Fragment implements OnSortMoviesChange
         String sort = "popularity.desc";
         MovieDb movieDb = new MovieDb(getActivity());
         m = new ArrayList<MovieModel>();
-        if (getArguments() != null) {
-            sort = getArguments().getString("sort");
-
-            Log.d("MainActivityFragment", "m.size():" + m.size());
-        }
-        if (sort.contains("fav")) {
-            getfromDb();
-            Log.d("MainActivityFragment", "fav");
-
-        } else
-            new FetchMovieTask().execute(sort);
 
 
         View view = inflater.inflate(R.layout.fragment_main, container, false);
@@ -85,10 +77,34 @@ public class MainActivityFragment extends Fragment implements OnSortMoviesChange
         // recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(moviesAdpater);
+        if (getArguments() != null) {
+            sort = getArguments().getString("sort");
+
+            Log.d("MainActivityFragment", "m.size():" + m.size());
+        }
+        if (!isNetworkConnected())
+            getfromDb();
+        else if (sort.contains("fav")) {
+            getfromDb();
+
+        } else
+            new FetchMovieTask().execute(sort);
+
 
         return view;
     }
 
+    protected boolean isNetworkConnected() {
+        try {
+            ConnectivityManager mConnectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+            return (mNetworkInfo == null) ? false : true;
+
+        } catch (NullPointerException e) {
+            return false;
+
+        }
+    }
     @Override
     public void onChangeSortMovies(String type) {
         if (type.contains("fav"))

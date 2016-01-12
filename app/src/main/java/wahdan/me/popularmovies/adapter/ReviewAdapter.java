@@ -58,8 +58,10 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewItem
 
     @Override
     public int getItemCount() {
-        Log.d("Review", "videoList.length():" + reviewList.length());
-        return reviewList.length();
+        if (reviewList != null) {
+            return reviewList.length();
+
+        } else return 0;
     }
 
     class ReviewItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
